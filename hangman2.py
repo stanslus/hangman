@@ -1,25 +1,63 @@
 import random
-#making the variable word to be global
-word='global'
-def randomWord():
-    with open("sowpod.txt",'r') as f:
-        wordList=f.read()
-    word=random.choice(wordList)
-randomWord()
-print('welcome to guess letters of a word till a word is formed')
-print('_'*len(word))
-while True:
-    guess=input('guess a letter:' )
-    guess.upper()
-    for char in word:      
-    # see if the character is in the players guess
-        if char in guess:    
-    
-        # print then out the character
-            print (char)    
+import multiprocessing as  mp #parallel programming
 
-        else:
+def load_wordList():
+    word_list = None
+    sowpod = 'sowpod.txt'
+
+    with open(sowpod, 'r+') as f:
+        #split the list into line
+        word_list = f.read().split('\n')
+
+     
+    return word_list
+
+
+def main():
     
-        # if not found, print a dash
-            print ("_",end="")     
+    word_list = load_wordList()
+    magic_word = random.choice(word_list).lower()
+
+    print('welcome and guess letters of a word till a word is formed')
+    print('Here is a clue, the word has the same length as these dashes:')
+    print("_ "*len(magic_word))
+    placeholder = "-"
+    my_guess = [ placeholder for l in magic_word ] #my empty word
+    #print(my_guess)
+    error_count  = 0
+    while True:
+        guess = input("Guess a letter or type 'quit' to Quit: ")
+
+        if guess == 'quit':
+            break
+        if guess in magic_word:
+            for index, letter in enumerate(magic_word):
+                if guess is letter:
+                    print(letter, end='')
+                    my_guess[index] = guess
+                elif my_guess[index] is letter:
+                    print(letter, end='')
+
+                else:
+                    print("-", end=' ')
+            print()
+        else:
+            error_count += 1
+            print(f'[{6-error_count}]: Incorrect!')
+        if error_count == 6:
+            print("Game Over!!!")
+            break
+        elif not ('-' in my_guess):
+            print("Cograts !!!!!")
+            break
             
+
+    print("The magic word was: ",magic_word)
+    print("Goodbye  (O^O) ")
+
+
+
+
+
+if __name__ == '__main__':
+    main()
